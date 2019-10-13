@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+</style>
+<title>CS 184 Mesh Editor</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2018</h1>
+<h1 align="middle">Project 4: Cloth Simulator</h1>
+<h2 align="middle">Michael Lu, CS184-aaz</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+<p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the project.</p>
+
+<h2 align="middle">Part I: Masses and springs</h2>
+
+<p>I iterated through the grid, column first then through the row in order to order the point masses in row-major order, check if the point mass is pinned, calculate its position depending on the orientation of the mesh, and create the point mesh. For the springs, I loop through all the point masses and create the structural, shearing, and bending springs based on the grid location of the point masses.</p>
+
+<div align="center">
+    <table style="width=100%">
+        <tr>
+            <td align="middle">
+            <img src="part1-1.png" width="480px" />
+            <figcaption align="middle">Wireframe - no shearing constraints</figcaption>
+            <td align="middle">
+            <img src="part1-2.png" width="480px" />
+            <figcaption align="middle">Wireframe - only shearing constraints</figcaption>
+        </tr>
+        <br>
+        <tr>
+            <td align="middle">
+            <img src="part1-3.png" width="480px" />
+            <figcaption align="middle">Wireframe - all constraints</figcaption>
+        </tr>
+    </table>
+</div>
+
+<h2 align="middle">Part II: Simulation via numerical integration</h2>
+
+<p>I first assigned a starting value of the gravitational force to each point mass. Then I applied the spring force to each point mass by iterating through all the springs and making the appropriate calculation. Then I used Verlet integration to approximate the position update for each point mass. Finally I applied a clamp to each of the springs by 10% longer than each spring's rest length.</p>
+
+<p>Increasing the ks of the springs makes the cloth stiffer and droop less; on the other hand, a low ks makes the cloth looser and fold easily. Changing the density of the cloth has a similar effect where the higher the density, the more the cloth folds as it falls. Changing the damping affects how fast the cloth tends toward its rest state, the higher the damping percentage, the slower it moves.</p>
+
+<div align="center">
+    <table style="width=100%">
+        <tr>
+            <td align="middle">
+            <img src="part2.png" width="480px" />
+            <figcaption align="middle">pinned4 cloth</figcaption>
+        </tr>
+    </table>
+</div>
+
+<h2 align="middle">Part III: Handling collisions with other objects</h2>
+
+<p>For the collisions, I simply calculate the point of intersection where the point mass should collide and move the position of the point mass in the direction of the intersection point, with an offset for the plane, scaled by a friction constant, instead of in the direction of the external forces applied to the cloth.</p>
+
+<p>Changing the ks of the springs changes the cloth's stiffness. For a low spring constant, the cloth is looser and therefore droops lower around the sphere. Additionally, the folds in the cloth are thinner and hang more downwards than outwards. On the other hand, the higher spring constant cloth is stiffer and folds higher up on the sphere.</p>
+
+<div align="center">
+    <table style="width=100%">
+        <tr>
+            <td align="middle">
+            <img src="part3-5000.png" width="480px" />
+            <figcaption align="middle">Sphere collision - ks: 5000 N/m</figcaption>
+            <td align="middle">
+            <img src="part3-500.png" width="480px" />
+            <figcaption align="middle">Sphere collision - ks: 500 N/m</figcaption>
+        </tr>
+        <br>
+        <tr>
+            <td align="middle">
+            <img src="part3-50000.png" width="480px" />
+            <figcaption align="middle">Sphere collision - ks: 50000 N/m</figcaption>
+            <td align="middle">
+            <img src="part3-2.png" width="480px" />
+            <figcaption align="middle">Plane collision</figcaption>
+        </tr>
+    </table>
+</div>
+
+
+</body>
+</html>
